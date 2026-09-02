@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        body {
+            background: #0a0a12;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: #16162a;
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 700px;
+            width: 100%;
+            border: 1px solid #2a2a4a;
+        }
+        .container h1 {
+            color: #fff;
+            font-size: 22px;
+            text-align: center;
+        }
+        .container .sub {
+            color: #666;
+            text-align: center;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: #0d0d1a;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        .form-group input:focus {
+            border-color: #6c5ce7;
+        }
+        .form-group input::placeholder {
+            color: #555;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #6c5ce7;
+            color: #fff;
+        }
+        .btn:hover {
+            background: #a855f7;
+        }
+        .btn-danger {
+            background: #e74c3c;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        .btn-success {
+            background: #00c853;
+        }
+        .btn-success:hover {
+            background: #00e676;
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+            width: auto;
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+        .success-msg {
+            color: #00c853;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+        .hide {
+            display: none !important;
+        }
+        .table-container {
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        thead {
+            background: #0d0d1a;
+        }
+        th {
+            color: #aaa;
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        td {
+            color: #ddd;
+            padding: 10px 12px;
+            border-bottom: 1px solid #1a1a2e;
+        }
+        td .email {
+            color: #6c5ce7;
+            font-weight: 500;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .status-badge.active {
+            background: rgba(0, 200, 83, 0.15);
+            color: #00c853;
+        }
+        .status-badge.banned {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+        .action-btn {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin: 2px;
+        }
+        .action-btn.ban {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+        .action-btn.ban:hover {
+            background: rgba(231, 76, 60, 0.3);
+        }
+        .action-btn.unban {
+            background: rgba(0, 200, 83, 0.15);
+            color: #00c853;
+        }
+        .action-btn.unban:hover {
+            background: rgba(0, 200, 83, 0.3);
+        }
+        .action-btn.delete {
+            background: rgba(231, 76, 60, 0.25);
+            color: #e74c3c;
+        }
+        .action-btn.delete:hover {
+            background: rgba(231, 76, 60, 0.5);
+        }
+        .empty-msg {
+            color: #555;
+            text-align: center;
+            padding: 30px 0;
+            font-size: 14px;
+        }
+        .stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            flex: 1;
+            min-width: 80px;
+            background: #0d0d1a;
+            border-radius: 12px;
+            padding: 12px 16px;
+            text-align: center;
+            border: 1px solid #1a1a2e;
+        }
+        .stat-card .number {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .stat-card .label {
+            color: #666;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        .stat-card .number.green {
+            color: #00c853;
+        }
+        .stat-card .number.red {
+            color: #e74c3c;
+        }
+        .stat-card .number.purple {
+            color: #6c5ce7;
+        }
+        .footer {
+            text-align: center;
+            color: #444;
+            font-size: 11px;
+            margin-top: 15px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 2000;
+            opacity: 0;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #16162a;
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid #2a2a4a;
+        }
+        .modal-box h3 {
+            color: #fff;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .modal-box p {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .modal-box textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: #0d0d1a;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 14px;
+        }
+        .modal-box textarea:focus {
+            border-color: #6c5ce7;
+        }
+        .modal-box .btn-row {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-box .btn-row button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .modal-box .btn-row .btn-confirm {
+            background: #e74c3c;
+            color: #fff;
+        }
+        .modal-box .btn-row .btn-confirm:hover {
+            background: #c0392b;
+        }
+        .modal-box .btn-row .btn-cancel {
+            background: rgba(255, 255, 255, 0.06);
+            color: #aaa;
+        }
+        .modal-box .btn-row .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+            }
+            table {
+                font-size: 12px;
+            }
+            th,
+            td {
+                padding: 6px 8px;
+            }
+            .stats {
+                gap: 8px;
+            }
+            .stat-card {
+                padding: 8px 10px;
+            }
+            .stat-card .number {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="banModal">
+    <div class="modal-box">
+        <h3>🚫 Ban Akun</h3>
+        <p>Masukkan alasan ban untuk <strong id="banEmailDisplay"></strong></p>
+        <textarea id="banReasonInput" placeholder="Contoh: Melanggar aturan"></textarea>
+        <div class="btn-row">
+            <button class="btn-confirm" onclick="confirmBan()">Ban</button>
+            <button class="btn-cancel" onclick="closeBanModal()">Batal</button>
+        </div>
+    </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginPage" class="container">
+    <h1>🔐 Admin Login</h1>
+    <p class="sub">Masuk untuk mengelola akun</p>
+    <div class="form-group"><input type="email" id="loginEmail" placeholder="Email admin"></div>
+    <div class="form-group"><input type="password" id="loginPass" placeholder="Password"></div>
+    <button class="btn" onclick="login()">Masuk</button>
+    <div class="error-msg" id="loginError">❌ Email atau password salah!</div>
+    <div class="footer">~ TUAN NICO ~</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboardPage" class="container hide">
+    <h1>📊 Admin Dashboard</h1>
+    <p class="sub" id="adminUser">👤 Admin</p>
+
+    <div class="stats">
+        <div class="stat-card"><div class="number purple" id="statTotal">0</div><div class="label">Total Akun</div></div>
+        <div class="stat-card"><div class="number green" id="statActive">0</div><div class="label">Aktif</div></div>
+        <div class="stat-card"><div class="number red" id="statBanned">0</div><div class="label">Di-Ban</div></div>
+    </div>
+
+    <div style="background:#0d0d1a;border-radius:12px;padding:15px;margin-bottom:15px;border:1px solid #1a1a2e;">
+        <p style="color:#888;font-size:13px;margin-bottom:10px;">➕ Daftar akun baru (bebas)</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <input type="email" id="regEmail" placeholder="Email baru" style="flex:1;min-width:140px;padding:10px 14px;background:#0d0d1a;border:1px solid #2a2a4a;border-radius:10px;color:#fff;font-size:13px;outline:none;">
+            <input type="text" id="regPass" placeholder="Password" style="flex:1;min-width:140px;padding:10px 14px;background:#0d0d1a;border:1px solid #2a2a4a;border-radius:10px;color:#fff;font-size:13px;outline:none;">
+            <button class="btn btn-success btn-sm" onclick="registerUser()">Daftar</button>
+        </div>
+        <div class="success-msg" id="regSuccess" style="margin-top:8px;">✅ Akun berhasil didaftarkan!</div>
+        <div class="error-msg" id="regError" style="margin-top:8px;">❌ Gagal daftar!</div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead><tr><th>No</th><th>Email</th><th>Status</th><th>Alasan</th><th>Aksi</th></tr></thead>
+            <tbody id="userTableBody"><tr><td colspan="5" class="empty-msg">Belum ada akun terdaftar.</td></tr></tbody>
+        </table>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:15px;flex-wrap:wrap;">
+        <button class="btn btn-danger" onclick="logout()" style="flex:1;">🚪 Logout</button>
+    </div>
+    <div class="footer">~ TUAN NICO ~</div>
+</div>
+
+<script>
+    const SERVER = window.location.origin;
+    let accounts = [];
+    let banTarget = null;
+
+    function showToast(msg) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._timeout);
+        el._timeout = setTimeout(() => el.classList.remove('show'), 2500);
+    }
+
+    // ============================================================
+    // LOGIN
+    // ============================================================
+
+    async function login() {
+        const email = document.getElementById('loginEmail').value.trim();
+        const pass = document.getElementById('loginPass').value.trim();
+        const error = document.getElementById('loginError');
+
+        error.style.display = 'none';
+
+        if (!email || !pass) {
+            error.textContent = '❌ Email dan password harus diisi!';
+            error.style.display = 'block';
+            return;
+        }
+
+        try {
+            const res = await fetch(SERVER + '/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password: pass })
+            });
+
+            const data = await res.json();
+
+            if (data.error) {
+                error.textContent = '❌ ' + data.error;
+                error.style.display = 'block';
+                showToast('❌ Login gagal!');
+                return;
+            }
+
+            if (data.banned) {
+                error.textContent = '🚫 AKUN DI-BAN! Alasan: ' + (data.reason || 'Tidak ada alasan');
+                error.style.display = 'block';
+                showToast('🚫 Akun Anda di-ban!');
+                return;
+            }
+
+            document.getElementById('loginPage').classList.add('hide');
+            document.getElementById('dashboardPage').classList.remove('hide');
+            document.getElementById('adminUser').textContent = '👤 ' + email;
+
+            loadAccounts();
+            showToast('✅ Login berhasil!');
+
+        } catch (err) {
+            error.textContent = '❌ Gagal koneksi ke server!';
+            error.style.display = 'block';
+            showToast('❌ Gagal koneksi!');
+        }
+    }
+
+    // ============================================================
+    // ACCOUNTS
+    // ============================================================
+
+    async function loadAccounts() {
+        try {
+            const res = await fetch(SERVER + '/api/accounts');
+            accounts = await res.json();
+            renderDashboard();
+        } catch (err) {
+            showToast('❌ Gagal load akun!');
+        }
+    }
+
+    function renderDashboard() {
+        const total = accounts.length;
+        const active = accounts.filter(a => a.status === 'active').length;
+        const banned = accounts.filter(a => a.status === 'banned').length;
+
+        document.getElementById('statTotal').textContent = total;
+        document.getElementById('statActive').textContent = active;
+        document.getElementById('statBanned').textContent = banned;
+
+        const tbody = document.getElementById('userTableBody');
+
+        if (accounts.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-msg">Belum ada akun terdaftar.</td></tr>';
+            return;
+        }
+
+        let html = '';
+        accounts.forEach((acc, i) => {
+            const status = acc.status === 'active' ?
+                '<span class="status-badge active">✅ Aktif</span>' :
+                '<span class="status-badge banned">🚫 Di-Ban</span>';
+
+            const reason = acc.status === 'banned' ?
+                `<span style="color:#ff6b6b;font-size:12px;">${acc.banReason || 'Tidak ada alasan'}</span>` :
+                '<span style="color:#444;">-</span>';
+
+            const btns = acc.status === 'active' ?
+                `<button class="action-btn ban" onclick="openBanModal('${acc.email}')">Ban</button>` :
+                `<button class="action-btn unban" onclick="unbanUser('${acc.email}')">Unban</button>`;
+
+            html += `<tr>
+                <td>${i+1}</td>
+                <td><span class="email">${acc.email}</span></td>
+                <td>${status}</td>
+                <td>${reason}</td>
+                <td>${btns}<button class="action-btn delete" onclick="deleteUser('${acc.email}')">Hapus</button></td>
+            </tr>`;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    // ============================================================
+    // REGISTER
+    // ============================================================
+
+    async function registerUser() {
+        const email = document.getElementById('regEmail').value.trim();
+        const pass = document.getElementById('regPass').value.trim();
+        const success = document.getElementById('regSuccess');
+        const error = document.getElementById('regError');
+
+        success.style.display = 'none';
+        error.style.display = 'none';
+
+        if (!email || !pass) {
+            error.textContent = '❌ Email dan password harus diisi!';
+            error.style.display = 'block';
+            return;
+        }
+
+        try {
+            const res = await fetch(SERVER + '/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password: pass })
+            });
+
+            const data = await res.json();
+
+            if (data.error) {
+                error.textContent = '❌ ' + data.error;
+                error.style.display = 'block';
+                return;
+            }
+
+            document.getElementById('regEmail').value = '';
+            document.getElementById('regPass').value = '';
+            success.textContent = '✅ Akun ' + email + ' berhasil didaftarkan!';
+            success.style.display = 'block';
+            loadAccounts();
+            showToast('✅ Akun ' + email + ' didaftarkan!');
+
+        } catch (err) {
+            error.textContent = '❌ Gagal koneksi!';
+            error.style.display = 'block';
+        }
+    }
+
+    // ============================================================
+    // BAN
+    // ============================================================
+
+    function openBanModal(email) {
+        banTarget = email;
+        document.getElementById('banEmailDisplay').textContent = email;
+        document.getElementById('banReasonInput').value = '';
+        document.getElementById('banModal').classList.add('active');
+    }
+
+    function closeBanModal() {
+        document.getElementById('banModal').classList.remove('active');
+        banTarget = null;
+    }
+
+    async function confirmBan() {
+        const reason = document.getElementById('banReasonInput').value.trim();
+        if (!reason) { showToast('❌ Alasan ban harus diisi!'); return; }
+
+        try {
+            await fetch(SERVER + '/api/ban', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: banTarget, reason })
+            });
+            closeBanModal();
+            loadAccounts();
+            showToast(`🚫 ${banTarget} di-BAN!`);
+        } catch (err) {
+            showToast('❌ Gagal ban!');
+        }
+    }
+
+    // ============================================================
+    // UNBAN
+    // ============================================================
+
+    async function unbanUser(email) {
+        try {
+            await fetch(SERVER + '/api/unban', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            loadAccounts();
+            showToast(`✅ ${email} di-UNBAN!`);
+        } catch (err) {
+            showToast('❌ Gagal unban!');
+        }
+    }
+
+    // ============================================================
+    // DELETE
+    // ============================================================
+
+    async function deleteUser(email) {
+        if (!confirm(`⚠️ Hapus akun ${email}?`)) return;
+
+        try {
+            await fetch(SERVER + '/api/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            loadAccounts();
+            showToast(`🗑️ ${email} dihapus!`);
+        } catch (err) {
+            showToast('❌ Gagal hapus!');
+        }
+    }
+
+    // ============================================================
+    // LOGOUT
+    // ============================================================
+
+    function logout() {
+        if (confirm('🚪 Yakin ingin keluar?')) {
+            document.getElementById('dashboardPage').classList.add('hide');
+            document.getElementById('loginPage').classList.remove('hide');
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPass').value = '';
+            showToast('✅ Logout berhasil!');
+        }
+    }
+
+    // ============================================================
+    // ENTER KEY
+    // ============================================================
+
+    document.getElementById('loginPass').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') login();
+    });
+
+    // ============================================================
+    // START
+    // ============================================================
+
+    console.log('🔑 Admin: kimzadmin1@gmail.com / kimzadmin');
+</script>
+
+</body>
+</html>
